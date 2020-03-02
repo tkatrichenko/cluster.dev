@@ -8,18 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy and Update K8s Clusters
     steps:
+    - name: Set env
+      run: echo ::set-env name=BRANCH_NAME::${github.ref} && \
+           echo ::set-env name=CLUSTER_CONFIG_PATH::"./.cluster.dev/${github.ref}.yaml"
+
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
-        ref: ${{ github.ref }} # BRANCH_NAME
+        ref: ${{ env.BRANCH_NAME }}
     - name: Reconcile Clusters
       id: reconcile
-      uses: shalb/cluster.dev@${{ github.ref }} # BRANCH_NAME
+      uses: shalb/cluster.dev@${{ env.BRANCH_NAME }}
       with:
-        cluster-config: ./.cluster.dev/${{ github.ref }}.yaml # CLUSTER_CONFIG_PATH
+        cluster-config: ${{ env.CLUSTER_CONFIG_PATH }}
         cloud-user: ${{ secrets.aws_access_key_id }}
         cloud-pass: ${{ secrets.aws_secret_access_key }}
-      if: test -f "./.cluster.dev/${{ github.ref }}.yaml" # CLUSTER_CONFIG_PATH
+      if: test -f "${{ env.CLUSTER_CONFIG_PATH }}"
     - name: Get the execution status
       run: echo "The status ${{ steps.reconcile.outputs.status }}"
 
