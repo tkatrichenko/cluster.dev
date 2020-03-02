@@ -1,6 +1,3 @@
-env:
-  BRANCH_NAME: ${{ github.ref }}
-  CLUSTER_CONFIG_PATH: "./.cluster.dev/${{ github.ref }}.yaml"
 
 on:
   push:
@@ -12,12 +9,20 @@ jobs:
     name: Deploy and Update K8s Clusters
     steps:
     - name: Checkout Repo
+      env:
+        BRANCH_NAME: ${{ github.ref }}
+        CLUSTER_CONFIG_PATH: "./.cluster.dev/${{ github.ref }}.yaml"
+
       uses: actions/checkout@v2
       with:
         ref: ${{ env.BRANCH_NAME }}
     - name: Reconcile Clusters
       id: reconcile
       uses: shalb/cluster.dev@${{ env.BRANCH_NAME }}
+      env:
+        BRANCH_NAME: ${{ github.ref }}
+        CLUSTER_CONFIG_PATH: "./.cluster.dev/${{ github.ref }}.yaml"
+
       with:
         cluster-config: ${{ env.CLUSTER_CONFIG_PATH }}
         cloud-user: ${{ secrets.aws_access_key_id }}
