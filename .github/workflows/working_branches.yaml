@@ -1,13 +1,13 @@
-env:
-  BRANCH_NAME: ${{ github.ref }}
-  CLUSTER_CONFIG_PATH: ./.cluster.dev/${{ github.ref }}.yaml
-
 on:
   push:
     branches-ignore:
     - master
 jobs:
   deploy_cluster_job:
+    env:
+      BRANCH_NAME: ${{ github.ref }}
+      CLUSTER_CONFIG_PATH: ./.cluster.dev/${{ github.ref }}.yaml
+
     runs-on: ubuntu-latest
     name: Deploy and Update K8s Clusters
     steps:
@@ -22,6 +22,7 @@ jobs:
         cluster-config: ${{ env.CLUSTER_CONFIG_PATH }}
         cloud-user: ${{ secrets.aws_access_key_id }}
         cloud-pass: ${{ secrets.aws_secret_access_key }}
+      if: test -f "${{ env.CLUSTER_CONFIG_PATH }}"
     - name: Get the execution status
       run: echo "The status ${{ steps.reconcile.outputs.status }}"
 
