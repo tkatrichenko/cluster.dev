@@ -1,13 +1,13 @@
+env:
+  branch_name: ${{ github.ref }}
+  cluster_config_path: ./.cluster.dev/${{ github.ref }}.yaml
+
 on:
   push:
     branches-ignore:
     - master
 jobs:
   deploy_cluster_job:
-    env:
-      branch_name: ${{ github.ref }}
-      cluster_config_path: ./.cluster.dev/${{ github.ref }}.yaml
-
     runs-on: ubuntu-latest
     name: Deploy and Update K8s Clusters
     steps:
