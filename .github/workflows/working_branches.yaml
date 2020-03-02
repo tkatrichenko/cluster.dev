@@ -15,19 +15,19 @@ jobs:
 
       uses: actions/checkout@v2
       with:
-        ref: ${{ env.BRANCH_NAME }}
+        ref: ${{ BRANCH_NAME }}
     - name: Reconcile Clusters
       id: reconcile
-      uses: shalb/cluster.dev@${{ env.BRANCH_NAME }}
+      uses: shalb/cluster.dev@${{ BRANCH_NAME }}
       env:
         BRANCH_NAME: ${{ github.ref }}
         CLUSTER_CONFIG_PATH: "./.cluster.dev/${{ github.ref }}.yaml"
 
       with:
-        cluster-config: ${{ env.CLUSTER_CONFIG_PATH }}
+        cluster-config: ${{ CLUSTER_CONFIG_PATH }}
         cloud-user: ${{ secrets.aws_access_key_id }}
         cloud-pass: ${{ secrets.aws_secret_access_key }}
-      if: test -f "${{ env.CLUSTER_CONFIG_PATH }}"
+      if: test -f "${{ CLUSTER_CONFIG_PATH }}"
     - name: Get the execution status
       run: echo "The status ${{ steps.reconcile.outputs.status }}"
 
