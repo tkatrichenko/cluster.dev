@@ -1,0 +1,32 @@
+on:
+  push:
+    branches-ignore:
+    - master
+jobs:
+  deploy_cluster_job:
+    env:
+      branch_name: ${{ github.ref }}
+      cluster_config_path: ./.cluster.dev/${{ github.ref }}.yaml
+
+    runs-on: ubuntu-latest
+    name: Deploy and Update K8s Clusters
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ branch_name }}
+    - name: Reconcile Clusters
+      id: reconcile
+      uses: shalb/cluster.dev@${{ branch_name }}
+      with:
+        cluster-config: ${{ cluster_config_path }}
+        cloud-user: ${{ secrets.aws_access_key_id }}
+        cloud-pass: ${{ secrets.aws_secret_access_key }}
+    - name: Get the execution status
+      run: echo "The status ${{ steps.reconcile.outputs.status }}"
+
+# TODO: Auto-cleanup after branch deletion
+# See: https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onevent_nametypes
+# See: https://help.github.com/en/actions/reference/events-that-trigger-workflows#delete-event-delete
+# Can be triggered as PR closing - https://help.github.com/en/actions/reference/events-that-trigger-workflows#pull-request-event-pull_request
+# Or every evening: https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onschedule
