@@ -1,6 +1,6 @@
 env:
-  branch_name: ${{ github.ref }}
-  cluster_config_path: ./.cluster.dev/${{ github.ref }}.yaml
+  BRANCH_NAME: ${{ github.ref }}
+  CLUSTER_CONFIG_PATH: ./.cluster.dev/${{ github.ref }}.yaml
 
 on:
   push:
@@ -14,12 +14,12 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
-        ref: ${{ branch_name }}
+        ref: ${BRANCH_NAME}
     - name: Reconcile Clusters
       id: reconcile
-      uses: shalb/cluster.dev@${{ branch_name }}
+      uses: shalb/cluster.dev@${BRANCH_NAME}
       with:
-        cluster-config: ${{ cluster_config_path }}
+        cluster-config: ${CLUSTER_CONFIG_PATH}
         cloud-user: ${{ secrets.aws_access_key_id }}
         cloud-pass: ${{ secrets.aws_secret_access_key }}
     - name: Get the execution status
