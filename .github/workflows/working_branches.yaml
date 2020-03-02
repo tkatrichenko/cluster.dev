@@ -14,12 +14,12 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
-        ref: ${BRANCH_NAME}
+        ref: ${{ env.BRANCH_NAME }}
     - name: Reconcile Clusters
       id: reconcile
-      uses: shalb/cluster.dev@${BRANCH_NAME}
+      uses: shalb/cluster.dev@${{ env.BRANCH_NAME }}
       with:
-        cluster-config: ${CLUSTER_CONFIG_PATH}
+        cluster-config: ${{ env.CLUSTER_CONFIG_PATH }}
         cloud-user: ${{ secrets.aws_access_key_id }}
         cloud-pass: ${{ secrets.aws_secret_access_key }}
     - name: Get the execution status
